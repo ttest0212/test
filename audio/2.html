@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page suivante</title>
+    <link rel="stylesheet" href="background.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Pour FontAwesome -->
+    <style>
+        /* Style pour le bouton de musique */
+        #musicControl {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+            background-color: #444;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        #musicControl.playing {
+            background-color: #0f0; /* Couleur pour quand la musique joue */
+        }
+
+        #musicControl.stopped {
+            background-color: #f00; /* Couleur pour quand la musique est arrêtée */
+        }
+
+        #musicControl:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Video background with an ID for manipulation -->
+    <video class="background-video" id="backgroundVideo" autoplay muted loop>
+        <source src="green.mp4" type="video/mp4">
+        Votre navigateur ne supporte pas la vidéo.
+    </video>
+
+    <h1 id="headerText">Welcome</h1>
+
+    <div class="hearts-container">
+        <div class="hearts-counter" id="heartsCounter">X5</div>
+        <div class="hearts" id="hearts">
+            <img src="herat.gif" alt="Heart" class="heart" id="heart1">
+            <img src="herat.gif" alt="Heart" class="heart" id="heart2">
+            <img src="herat.gif" alt="Heart" class="heart" id="heart3">
+            <img src="herat.gif" alt="Heart" class="heart" id="heart4">
+            <img src="herat.gif" alt="Heart" class="heart" id="heart5">
+        </div>
+    </div>
+
+    <div class="login-container">
+        <div class="input-container">
+            <input class="login-input" type="text" placeholder="Nom" id="nameInput" oninput="validateName()">
+            <span id="nameIndicator" class="indicator"></span>
+        </div>
+        <div class="input-container">
+            <input class="login-input" type="password" placeholder="Code" id="codeInput" oninput="validateCode()">
+        </div>
+        <button class="login-button" onclick="validateLogin()">Cliquez ici pour continuer</button>
+        <p class="hint">Je teste ta conscience; Mon nom complet est important, mais parfois mon prénom seul suffit. Je contiens les lettres “r” et “i”. Qui suis-je ?</p>
+        <p class="hint">Pour le code, indique ce que représentent ces coordonnées (41.30379° N, 81.90155° W) pour ton cœur !</p>
+        <p class="access-denied" id="accessDenied"></p>
+    </div>
+
+    <!-- Audio player for background music -->
+    <audio id="backgroundMusic" src="haha.wav" loop></audio>
+    <audio id="errorSound" src="error-sound.wav"></audio>
+
+    <!-- Bouton avec icônes -->
+    <button id="musicControl" class="stopped" onclick="toggleMusic()">
+        <i id="musicIcon" class="fas fa-volume-up"></i> <!-- Icône par défaut -->
+    </button>
+
+    <script src="music.js"></script>
+    <script>
+        // Réinitialiser les cœurs à 5 lorsque la page se charge
+        document.addEventListener('DOMContentLoaded', () => {
+            localStorage.setItem('hearts', 5);
+            updateHeartsDisplay();
+        });
+
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        const musicControl = document.getElementById('musicControl');
+        const musicIcon = document.getElementById('musicIcon');
+
+        function toggleMusic() {
+            if (backgroundMusic.paused) {
+                backgroundMusic.play().catch(error => {
+                    console.log('Erreur lors de la lecture de la musique de fond:', error);
+                });
+                musicControl.classList.remove('stopped');
+                musicControl.classList.add('playing');
+                musicIcon.className = 'fas fa-volume-mute'; // Icône quand la musique est jouée
+                musicControl.setAttribute('aria-label', 'Arrêter la musique');
+            } else {
+                backgroundMusic.pause();
+                musicControl.classList.remove('playing');
+                musicControl.classList.add('stopped');
+                musicIcon.className = 'fas fa-volume-up'; // Icône quand la musique est arrêtée
+                musicControl.setAttribute('aria-label', 'Démarrer la musique');
+            }
+        }
+
+        let hearts = 5;
+
+        function validateName() {
+            const nameInput = document.querySelector('#nameInput');
+            const nameIndicator = document.getElementById('nameIndicator');
+
+            if (nameInput.value.trim() === '') {
+                nameIndicator.className = 'indicator'; // Gris
+            } else if (nameInput.value.toUpperCase() === 'MERIEM') {
+                nameIndicator.className = 'indicator correct'; // Bleu clair
+            } else {
+                nameIndicator.className = 'indicator incorrect'; // Rouge
+            }
+        }
+
+        function validateCode() {
+            // Validation du code non nécessaire pour l'indicateur
+        }
+
+        function validateLogin() {
+            const nameInput = document.querySelector('#nameInput');
+            const codeInput = document.querySelector('#codeInput');
+            const accessDeniedMessage = document.getElementById('accessDenied');
+            const headerText = document.getElementById('headerText');
+            const backgroundVideo = document.getElementById('backgroundVideo'); // Référence à la vidéo
+
+            let errorMessage = '';
+            let isNameIncorrect = nameInput.value.toUpperCase() !== 'MERIEM';
+            let isPasswordIncorrect = codeInput.value.toUpperCase() !== 'AS';
+
+            if (isNameIncorrect && isPasswordIncorrect) {
+                errorMessage = 'Accès refusé. Vérifiez votre nom et votre mot de passe.';
+                headerText.textContent = 'Error 404';
+                headerText.style.color = '#FF007F'; // Rouge rosé
+            } else if (isNameIncorrect) {
+                errorMessage = 'Accès refusé. Vérifiez votre nom.';
+                headerText.textContent = 'Error 404';
+                headerText.style.color = '#FF007F'; // Rouge rosé
+            } else if (isPasswordIncorrect) {
+                errorMessage = 'Accès refusé. Vérifiez votre mot de passe.';
+                headerText.textContent = 'Error 404';
+                headerText.style.color = '#FF007F'; // Rouge rosé
+            }
+
+            if (errorMessage) {
+                accessDeniedMessage.textContent = errorMessage;
+                document.getElementById('errorSound').play(); // Joue le son d'erreur
+                hearts--;
+                updateHeartsDisplay();
+                if (hearts <= 0) {
+                    setTimeout(() => {
+                        window.location.href = 'echec.html'; // Redirige vers une page d'échec
+                    }, 1000);
+                } else {
+                    // Changer la vidéo de fond en rouge
+                    backgroundVideo.src = 'video/red.mp4'; // Assurez-vous que le chemin est correct
+                    backgroundVideo.load(); // Recharge la nouvelle vidéo
+                }
+            } else {
+                // Rediriger vers la page suivante
+                // Démarrer la musique de fond
+                backgroundMusic.play(); // Joue la musique de fond
+                window.location.href = 'page-suivante.html';
+            }
+        }
+
+        function updateHeartsDisplay() {
+            for (let i = 1; i <= 5; i++) {
+                const heart = document.getElementById(`heart${i}`);
+                if (i > hearts) {
+                    heart.style.visibility = 'hidden';
+                } else {
+                    heart.style.visibility = 'visible';
+                }
+            }
+            document.getElementById('heartsCounter').textContent = `X${hearts}`;
+        }
+    </script>
+</body>
+</html>

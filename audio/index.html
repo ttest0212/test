@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page d'accueil</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        .background-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+        h1 {
+            font-size: 3rem;
+            text-align: center;
+            margin-top: 20vh;
+            color: lime;
+            position: relative;
+            z-index: 1;
+        }
+        .continue-link {
+            display: block;
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 1.5rem;
+            color: lime;
+            text-decoration: none;
+            position: relative;
+            z-index: 1;
+        }
+        .continue-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <video class="background-video" autoplay muted loop>
+        <source src="green.mp4" type="video/mp4">
+        Votre navigateur ne supporte pas la vidéo.
+    </video>
+    <h1>Welcome</h1>
+    <a class="continue-link" href="2.html">Cliquez ici pour continuer</a>
+</body>
+</html>
