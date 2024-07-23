@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Échec</title>
+    <style>
+        /* CSS pour la page d'échec */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: black;
+        }
+
+        .error-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        .error-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            font-family: monospace;
+            display: none; /* Cache le message jusqu'à la fin de la vidéo */
+        }
+
+        .retry-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            color: white;
+            background-color: red;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .retry-button:hover {
+            background-color: darkred;
+        }
+    </style>
+</head>
+<body>
+    <video class="error-video" id="errorVideo" autoplay muted>
+        <source src="media/error-video.mp4" type="video/mp4">
+        Votre navigateur ne supporte pas la vidéo.
+    </video>
+
+    <audio id="errorAudio" src="media/error-audio.mp3"></audio>
+
+    <div class="error-container" id="errorContainer">
+        <h1>Échec</h1>
+        <p>Vous avez épuisé tous vos cœurs. Veuillez réessayer.</p>
+        <button class="retry-button" onclick="retry()">Réessayer</button>
+    </div>
+
+    <script>
+        const video = document.getElementById('errorVideo');
+        const audio = document.getElementById('errorAudio');
+        const messageContainer = document.getElementById('errorContainer');
+
+        // Assurez-vous que la vidéo commence à jouer
+        video.addEventListener('play', () => {
+            audio.play().catch(error => {
+                console.log('Erreur lors de la lecture de l\'audio:', error);
+            });
+        });
+
+        // Afficher le message après la fin de la vidéo
+        video.addEventListener('ended', () => {
+            audio.pause(); // Arrête l'audio si la vidéo se termine
+            audio.currentTime = 0; // Réinitialise le temps de l'audio
+            messageContainer.style.display = 'block'; // Affiche le message d'échec
+        });
+
+        // Fonction pour réessayer
+        function retry() {
+            localStorage.setItem('hearts', 5); // Réinitialiser les cœurs à 5
+            window.location.href = '2.html'; // Redirige vers la page 2.html
+        }
+    </script>
+</body>
+</html>
